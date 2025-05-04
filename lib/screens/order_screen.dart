@@ -366,7 +366,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             horizontal: 16 * scaleX,
                           ),
                           child: SizedBox(
-                            width: 340 * scaleX,
+                            width: 396 * scaleX,
                             height: 40 * scaleY,
                             child: Text(
                               "Заполните поля ниже,\nкуда бы Вы хотели получать отклик от исполнителей.",
@@ -466,7 +466,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             ),
                             SizedBox(width: 10 * scaleX),
                             Container(
-                              width: 175 * scaleX,
+                              width: 275 * scaleX,
                               height: 28 * scaleY,
                               alignment: Alignment.centerLeft,
                               child: Text(

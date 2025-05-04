@@ -35,10 +35,7 @@ class PassResetNewPasswordPage extends StatelessWidget {
         ),
         SizedBox(height: 20 * scaleY),
         // Поле ввода кода подтверждения
-        Positioned(
-          top: 156 * scaleY,
-          left: 20 * scaleX,
-          child: CustomTextField(
+        CustomTextField(
             scaleX: scaleX,
             scaleY: scaleY,
             hintText: "Пароль",
@@ -46,13 +43,9 @@ class PassResetNewPasswordPage extends StatelessWidget {
             enableToggle: true,
             controller: passwordController,
           ),
-        ),
+
         SizedBox(height: 80 * scaleY),
-        Positioned(
-          top: 246 * scaleY,
-          left: 20 * scaleX,
-          child: NextButton(scaleX: scaleX, scaleY: scaleY, onPressed: onNext),
-        ),
+        NextButton(scaleX: scaleX, scaleY: scaleY, onPressed: onNext),
         SizedBox(height: 300 * scaleY),
       ],
     );

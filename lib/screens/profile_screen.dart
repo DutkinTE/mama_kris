@@ -26,6 +26,8 @@ Future<void> onExitPressed(BuildContext context) async {
     await prefs.remove('user_id');
     await prefs.remove('email');
     await prefs.remove('isLoggedIn');
+    await prefs.remove('isLogged');
+
     await prefs.remove('saved_jobs');
     await prefs.remove('saved_reduced_jobs');
     // await prefs.remove('current_page');

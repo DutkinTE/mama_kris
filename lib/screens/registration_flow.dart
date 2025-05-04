@@ -131,7 +131,7 @@ Future<bool> registerFunction(
       await prefs.setString('auth_token', responseData['accessToken']);
       await prefs.setString('refresh_token', responseData['refreshToken']);
       await prefs.setInt('user_id', responseData['userId']);
-      await prefs.setBool('isLoggedIn', true);
+      await prefs.setBool('isLogged', true);
       await prefs.setString('current_page', 'choice');
       await prefs.setInt('viewed_count', 0);
       await prefs.setInt('liked_count', 0);

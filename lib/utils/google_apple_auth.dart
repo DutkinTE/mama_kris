@@ -102,7 +102,7 @@ Future<void> signInWithApple(BuildContext context) async {
         await prefs.setString('auth_token', accessToken);
         await prefs.setString('refresh_token', refreshToken);
         await prefs.setInt('user_id', userId);
-        await prefs.setBool('isLoggedIn', true);
+        await prefs.setBool('isLogged', true);
 
         final fullName = credential.givenName ?? '';
         if (fullName.isNotEmpty) {
@@ -220,7 +220,7 @@ Future<void> signInWithGoogle(BuildContext context) async {
         await prefs.setString('auth_token', accessToken);
         await prefs.setString('refresh_token', refreshToken);
         await prefs.setInt('user_id', userId);
-        await prefs.setBool('isLoggedIn', true);
+        await prefs.setBool('isLogged', true);
         if (googleUser.displayName != null) {
           final name = googleUser.displayName!;
           await prefs.setString('name', name);

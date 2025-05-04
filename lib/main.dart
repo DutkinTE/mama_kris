@@ -140,7 +140,7 @@ class _AppInitializerState extends State<AppInitializer> {
 
     // Далее определяем начальный экран на основании состояния входа пользователя
     final prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    bool isLoggedIn = prefs.getBool('isLogged') ?? false;
     String? currentPage = prefs.getString('current_page');
     String? accessToken = prefs.getString('auth_token');
     int? userId = prefs.getInt('user_id');
@@ -164,11 +164,14 @@ class _AppInitializerState extends State<AppInitializer> {
 
         int likedCount = await funcs.getLikedCount(accessToken, userId);
         await prefs.setInt('liked_count', likedCount);
-      }
       // Если currentPage равен "tinder" или "job", запускаем MainScreen, иначе WelcomeScreen
-      if (currentPage == 'tinder' || currentPage == 'job') {
+      if (currentPage == 'tinder' || currentPage == 'search' || currentPage == 'job') {
         return MainScreen();
       } else {
+        return WelcomeScreen();
+      }
+      }
+      else {
         return WelcomeScreen();
       }
     } else {

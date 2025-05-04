@@ -70,7 +70,7 @@ Future<bool> loginAndContinue({
         await prefs.setString('auth_token', accessToken);
         await prefs.setString('refresh_token', refreshToken);
         await prefs.setInt('user_id', userId);
-        await prefs.setBool('isLoggedIn', true);
+        await prefs.setBool('isLogged', true);
         funcs.updateUserDataInCache(accessToken, userId);
 
         // // Сохраняем email, номер телефона и имя пользователя

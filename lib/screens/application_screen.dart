@@ -186,8 +186,9 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     );
     if (!spheresAdded) return;
 
-    await prefs.setString('current_page', 'tinder');
+    await prefs.setString('current_page', 'search');
     await prefs.remove('saved_jobs');
+    await prefs.remove('saved_reduced_jobs');
 
     // Навигация на MainScreen
     Navigator.pushAndRemoveUntil(

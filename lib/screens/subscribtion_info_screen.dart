@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mama_kris/constants/api_constants.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class SubscribtionInfoScreen extends StatelessWidget {
   const SubscribtionInfoScreen({Key? key}) : super(key: key);
@@ -14,9 +17,11 @@ class SubscribtionInfoScreen extends StatelessWidget {
     final accessToken = prefs.getString('auth_token');
     final userId = prefs.getInt('user_id');
 
+    await initializeDateFormatting('ru_RU', null);
+
     // Используем фиксированный id, например 26, как в вашем запросе
     final url = Uri.parse(
-      'https://dev.mamakris.ru/api/payments.v2/subscription-info/$userId',
+      '${kBaseUrl}payments.v2/subscription-info/$userId',
     );
     final response = await http.get(
       url,
@@ -104,12 +109,17 @@ class SubscribtionInfoScreen extends StatelessWidget {
                   final subInfo = snapshot.data!;
                   if (subInfo['hasSubscription'] == true) {
                     if (subInfo['expiresAt'] != null) {
-                      text = 'Ваша подписка истекает: ${subInfo['expiresAt']}';
+                      final rawDate = subInfo['expiresAt']; // "2026-04-10T12:37:16.000Z"
+                      final parsedDate = DateTime.parse(rawDate).toLocal();
+                      final formattedDate = DateFormat('d MMMM y \'года\'', 'ru_RU').format(parsedDate);
+
+                      text = 'Ваша подписка истекает:\n$formattedDate';
+
                       // Стиль для даты подписки
                       style = TextStyle(
                         fontFamily: 'Jost',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14 * scaleX,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 26 * scaleX,
                         height: 20 / 14,
                         letterSpacing: -0.1 * scaleX,
                         color: const Color(0xFF596574),

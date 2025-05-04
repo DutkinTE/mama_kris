@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:mama_kris/constants/api_constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Функция для показа модального окна "CareerSheet" – панели, выезжающей снизу,
 /// с прокручиваемым содержимым.
@@ -56,6 +57,8 @@ void showPassResetEmailSheet(BuildContext context) {
       );
       return;
     }
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('email', email);
     Navigator.pop(context);
     PassReset(
       email: email,
