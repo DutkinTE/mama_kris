@@ -6,6 +6,7 @@ import 'package:mama_kris/widgets/next_button.dart';
 import 'package:mama_kris/widgets/custom_checkbox.dart';
 import 'application_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:mama_kris/utils/funcs.dart' as funcs;
 
 class MonetizationBannerScreen extends StatefulWidget {
@@ -19,9 +20,14 @@ class MonetizationBannerScreen extends StatefulWidget {
 class _MonetizationBannerScreenState extends State<MonetizationBannerScreen> {
   bool careerChecked = false;
   bool psychoChecked = false;
+  final String careerWhatsAppLink = "https://wa.me/79376371117?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%9C%D0%BD%D0%B5%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D0%BD%D0%BE%20%D1%80%D0%B0%D0%B7%D0%BC%D0%B5%D1%89%D0%B5%D0%BD%D0%B8%D0%B5%20%D1%80%D0%B5%D0%BA%D0%BB%D0%B0%D0%BC%D1%8B%20%D0%B2%D0%BD%D1%83%D1%82%D1%80%D0%B8%20%D0%B2%D0%B0%D1%88%D0%B5%D0%B3%D0%BE%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D1%8F.%20%20%20%D0%9D%D0%B0%D0%BF%D0%B8%D1%88%D0%B8%D1%82%D0%B5%2C%20%D0%BF%D0%BE%D0%B6%D0%B0%D0%BB%D1%83%D0%B9%D1%81%D1%82%D0%B0%2C%20%D1%83%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F%20%D1%80%D0%B0%D0%B7%D0%BC%D0%B5%D1%89%D0%B5%D0%BD%D0%B8%D1%8F.";
   Future<void> _navigateToChoice(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final choice = prefs.getString('choice');
+    // Проверяем состояние чекбоксов
+    if (careerChecked) {
+      await _launchWhatsApp(careerWhatsAppLink);
+    }
     // Определяем целевую страницу и значение для current_page по выбору пользователя.
     final Widget targetPage =
         (choice == 'Looking for job') ? ApplicationScreen() : MainScreen();
@@ -46,6 +52,15 @@ class _MonetizationBannerScreenState extends State<MonetizationBannerScreen> {
         },
       ),
     );
+  }
+
+  // Функция для открытия WhatsApp
+  Future<void> _launchWhatsApp(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override

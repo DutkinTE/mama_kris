@@ -38,12 +38,12 @@ class ChatScreen extends StatelessWidget {
   }
 
   void _onCareerConsultantPressed(BuildContext context) {
-    showCareerSheet(context);
+    showCareerSheet(context,  mode: "chat");
     // TODO: Реализовать переход
   }
 
   void _onPsychSupportPressed(BuildContext context) {
-    showPsychoSheet(context);
+    showPsychoSheet(context, mode: "chat");
     // TODO: Реализовать переход
   }
 

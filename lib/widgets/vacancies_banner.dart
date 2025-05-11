@@ -10,7 +10,7 @@ class VacanciesBanner extends StatelessWidget {
   Future<String?> _getAdvImageUrl() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('adv_image_url');
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {

@@ -192,7 +192,7 @@ class _AppInitializerState extends State<AppInitializer> {
     }
     return 0;
   }
-
+  
   @override
   void initState() {
     super.initState();

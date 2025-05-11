@@ -151,7 +151,7 @@ Future<bool> updateSelectedSpheres() async {
       bool refreshed = await refreshAccessToken();
       // print("updateSelectedSpheres: token refreshed = $refreshed");
       if (refreshed) {
-        // Получаем новый accessToken и повторяем запрос
+        // Получаем новый accessToken и повторяем запрос 
         accessToken = (await SharedPreferences.getInstance()).getString(
           'auth_token',
         );
@@ -897,7 +897,6 @@ Future<Map<String, dynamic>?> updateKarKonsStatusFromCache() async {
 
   final url = 'https://mamakris.sotka-api.ru/update_request';
   final body = {"phone": phone, "name": name ?? "", "kar_kons": true};
-
   final response = await http.post(
     Uri.parse(url),
     headers: {"Content-Type": "application/json", "accept": "*/*"},

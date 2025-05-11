@@ -9,6 +9,7 @@ import 'package:mama_kris/screens/psycho_sheet.dart';
 import 'application_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mama_kris/utils/funcs.dart' as funcs;
+import 'package:url_launcher/url_launcher.dart';
 
 class MonetizationScreen extends StatefulWidget {
   const MonetizationScreen({Key? key}) : super(key: key);
@@ -21,8 +22,12 @@ class _MonetizationScreenState extends State<MonetizationScreen> {
   bool careerChecked = false;
   bool psychoChecked = false;
 
+  final String careerWhatsAppLink = "https://wa.me/79376371117?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%BC%D0%BD%D0%B5%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D0%BD%D0%B0%20%D1%83%D1%81%D0%BB%D1%83%D0%B3%D0%B0%20%D0%BA%D0%B0%D1%80%D1%8C%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D0%BE%D0%BD%D1%81%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D0%BD%D1%82%20%D0%B4%D0%BB%D1%8F%20%D0%B1%D0%BE%D0%BB%D0%B5%D0%B5%20%D0%B1%D1%8B%D1%81%D1%82%D1%80%D0%BE%D0%B3%D0%BE%20%D0%BF%D0%BE%D0%B8%D1%81%D0%BA%D0%B0%20%D1%83%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%BD%D0%BE%D0%B9%20%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B.%20%D0%94%D0%B0%D0%B2%D0%B0%D0%B9%D1%82%D0%B5%20%D0%B4%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE%D1%80%D0%B8%D0%BC%D1%81%D1%8F%20%D0%BE%D0%B1%20%D1%83%D0%B4%D0%BE%D0%B1%D0%BD%D0%BE%D0%BC%20%D0%B4%D0%BD%D0%B5%20%D0%B8%20%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%B8%20%D1%81%D0%BE%D0%B7%D0%B2%D0%BE%D0%BD%D0%B0%20%D0%B2%20zoom%20%D1%81%20%D1%8D%D0%BA%D1%81%D0%BF%D0%B5%D1%80%D1%82%D0%BE%D0%BC%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0%20MamaKris%3F";
+  final String psychoWhatsAppLink = "https://wa.me/79376371117?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%BC%D0%BD%D0%B5%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D0%BD%D0%B0%20%D1%83%D1%81%D0%BB%D1%83%D0%B3%D0%B0%20%D0%BF%D1%81%D0%B8%D1%85%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%B1%D0%BE%D0%BB%D0%B5%D0%B5%20%D0%B1%D1%8B%D1%81%D1%82%D1%80%D0%BE%D0%B3%D0%BE%20%D0%BF%D0%BE%D0%B8%D1%81%D0%BA%D0%B0%20%D1%83%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%BD%D0%BE%D0%B9%20%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B.%20%D0%94%D0%B0%D0%B2%D0%B0%D0%B9%D1%82%D0%B5%20%D0%B4%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE%D1%80%D0%B8%D0%BC%D1%81%D1%8F%20%D0%BE%D0%B1%20%D1%83%D0%B4%D0%BE%D0%B1%D0%BD%D0%BE%D0%BC%20%D0%B4%D0%BD%D0%B5%20%D0%B8%20%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%B8%20%D1%81%D0%BE%D0%B7%D0%B2%D0%BE%D0%BD%D0%B0%20%D0%B2%20zoom%20%D1%81%20%D1%8D%D0%BA%D1%81%D0%BF%D0%B5%D1%80%D1%82%D0%BE%D0%BC%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0%20MamaKris%3F";
+  final String bothWhatsAppLink = "https://wa.me/79376371117?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%BC%D0%BD%D0%B5%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D0%BD%D1%8B%20%D1%83%D1%81%D0%BB%D1%83%D0%B3%D0%B8%20%D0%BA%D0%B0%D1%80%D1%8C%D0%B5%D1%80%D0%BD%D1%8B%D0%B9%20%D0%BA%D0%BE%D0%BD%D1%81%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D0%BD%D1%82%20%D0%B8%20%D0%BF%D1%81%D0%B8%D1%85%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%B1%D0%BE%D0%BB%D0%B5%D0%B5%20%D0%B1%D1%8B%D1%81%D1%82%D1%80%D0%BE%D0%B3%D0%BE%20%D0%BF%D0%BE%D0%B8%D1%81%D0%BA%D0%B0%20%D1%83%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%BD%D0%BE%D0%B9%20%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B.%20%D0%94%D0%B0%D0%B2%D0%B0%D0%B9%D1%82%D0%B5%20%D0%B4%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE%D1%80%D0%B8%D0%BC%D1%81%D1%8F%20%D0%BE%D0%B1%20%D1%83%D0%B4%D0%BE%D0%B1%D0%BD%D0%BE%D0%BC%20%D0%B4%D0%BD%D0%B5%20%D0%B8%20%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%B8%20%D1%81%D0%BE%D0%B7%D0%B2%D0%BE%D0%BD%D0%B0%20%D0%B2%20zoom%20%D1%81%20%D1%8D%D0%BA%D1%81%D0%BF%D0%B5%D1%80%D1%82%D0%BE%D0%BC%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0%20MamaKris%3F";
+
   void _onCareerButtonPressed(BuildContext context) async {
-    final bool? result = await showCareerSheet(context);
+    final bool? result = await showCareerSheet(context, mode: "reg");
     if (result == true) {
       setState(() {
         careerChecked = true;
@@ -32,7 +37,7 @@ class _MonetizationScreenState extends State<MonetizationScreen> {
   }
 
   void _onPsychoButtonPressed(BuildContext context) async {
-    final bool? result = await showPsychoSheet(context);
+    final bool? result = await showPsychoSheet(context, mode: "reg");
     if (result == true) {
       setState(() {
         psychoChecked = true;
@@ -41,9 +46,28 @@ class _MonetizationScreenState extends State<MonetizationScreen> {
     }
   }
 
+  // Функция для открытия WhatsApp
+  Future<void> _launchWhatsApp(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   Future<void> _navigateToChoice(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final choice = prefs.getString('choice');
+
+    // Проверяем состояние чекбоксов
+    if (careerChecked && psychoChecked) {
+      await _launchWhatsApp(bothWhatsAppLink);
+    } else if (careerChecked) {
+      await _launchWhatsApp(careerWhatsAppLink);
+    } else if (psychoChecked) {
+      await _launchWhatsApp(psychoWhatsAppLink);
+    }
+
     // Определяем целевую страницу и значение для current_page по выбору пользователя.
     final Widget targetPage =
         (choice == 'Looking for job') ? ApplicationScreen() : MainScreen();
@@ -370,7 +394,7 @@ class _MonetizationScreenState extends State<MonetizationScreen> {
                     ),
                   ],
                 ),
-              ),
+              ), 
             ),
           ),
           Positioned(

@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mama_kris/widgets/stat.dart';
+import 'package:mama_kris/utils/stat_service.dart';
 import 'package:mama_kris/widgets/vacancies_slider.dart';
 import 'package:mama_kris/widgets/vacancies_banner.dart';
 import 'package:mama_kris/screens/contacts_sheet.dart';
@@ -25,6 +27,8 @@ class VacanciesScreen extends StatefulWidget {
 }
 
 class _VacanciesScreenState extends State<VacanciesScreen> {
+  int usersCount = 0;
+  int vacanciesCount = 0;
   int selectedMode = 0; // 0 - Слайдер, 1 - Список
   int currentVacancyIndex = 0;
   int previousVacancyIndex = 0;
@@ -35,6 +39,17 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
   void initState() {
     super.initState();
     _loadInitialVacancies();
+    _loadPlatformStats();
+  }
+
+  Future<void> _loadPlatformStats() async {
+    final stats = await StatService.getPlatformStats();
+    if (mounted) {
+      setState(() {
+        usersCount = stats['users'];
+        vacanciesCount = stats['vacancies'];
+      });
+    }
   }
 
   Future<void> _loadInitialVacancies() async {
@@ -82,7 +97,8 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
         : await VacancyService.dislikeVacancy(jobID);
 
     if (!success) {
-      final error = VacancyService.getLastErrorMessage() ?? 'Неизвестная ошибка';
+      final error =
+          VacancyService.getLastErrorMessage() ?? 'Неизвестная ошибка';
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -364,7 +380,7 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
               left: 16 * scaleX,
               child: SizedBox(
                 width: 395 * scaleX,
-                height: 540 * scaleY,
+                height: 520 * scaleY,
                 // Без AnimatedSwitcher здесь — карточка не пересоздаётся
                 child: vacancies!.isEmpty
                     ? NoMoreVacanciesCard(
@@ -424,10 +440,20 @@ class _VacanciesScreenState extends State<VacanciesScreen> {
           // Рекламный баннер (показывается только в режиме "Слайдер")
           if (selectedMode == 0)
             Positioned(
-              top: (196 + 540 + 20) * scaleY,
+              top: (756) * scaleY,
               // top: 688 * scaleY,
               left: 16 * scaleX,
               child: const VacanciesBanner(),
+            ),
+
+          if (selectedMode == 0)
+            Positioned(
+              top: (725) * scaleY,
+              left: 16 * scaleX,
+              child: StatBanner(
+                usersCount: usersCount,
+                vacanciesCount: vacanciesCount,
+              ),
             ),
         ],
       ),
