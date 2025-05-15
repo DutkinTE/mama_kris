@@ -11,7 +11,6 @@ import 'package:mama_kris/screens/main_screen.dart';
 import 'package:mama_kris/screens/pass_reset_manager.dart';
 import 'package:mama_kris/constants/api_constants.dart';
 import 'package:mama_kris/screens/subscribtion_info_screen.dart';
-import 'package:mama_kris/widgets/change_alert.dart';
 
 Future<void> onExitPressed(BuildContext context) async {
   try {

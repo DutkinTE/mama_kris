@@ -61,11 +61,11 @@ class _MonetizationScreenState extends State<MonetizationScreen> {
 
     // Проверяем состояние чекбоксов
     if (careerChecked && psychoChecked) {
-      await _launchWhatsApp(bothWhatsAppLink);
+       _launchWhatsApp(bothWhatsAppLink);
     } else if (careerChecked) {
-      await _launchWhatsApp(careerWhatsAppLink);
+       _launchWhatsApp(careerWhatsAppLink);
     } else if (psychoChecked) {
-      await _launchWhatsApp(psychoWhatsAppLink);
+       _launchWhatsApp(psychoWhatsAppLink);
     }
 
     // Определяем целевую страницу и значение для current_page по выбору пользователя.

@@ -5,7 +5,6 @@ import 'package:mama_kris/screens/main_screen.dart';
 import 'package:mama_kris/widgets/custom_text_field.dart';
 import 'package:mama_kris/widgets/custom_dropdown.dart';
 import 'package:mama_kris/widgets/custom_checkbox.dart';
-import 'package:mama_kris/utils/funcs.dart' as funcs;
 // import 'package:http/http.dart' as http;
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'dart:convert';
