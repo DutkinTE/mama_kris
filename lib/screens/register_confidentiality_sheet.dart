@@ -6,10 +6,8 @@ import 'package:mama_kris/widgets/next_button.dart';
 import 'package:mama_kris/widgets/custom_checkbox.dart';
 import 'package:mama_kris/screens/conf.dart';
 import 'package:mama_kris/screens/license_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// ConfidentialityPanel – первый шаг регистрации, отвечающий за показ
-/// условий конфиденциальности. При нажатии на кнопку «Далее», если оба
-/// чекбокса отмечены, вызывается onNext для перехода к следующему шагу.
 class ConfidentialityPanel extends StatefulWidget {
   final double scaleX;
   final double scaleY;
@@ -19,8 +17,8 @@ class ConfidentialityPanel extends StatefulWidget {
     Key? key,
     required this.scaleX,
     required this.scaleY,
-    required this.onNext,
-  }) : super(key: key);
+     required this.onNext,
+  }) : super(key: key); 
 
   @override
   _ConfidentialityPanelState createState() => _ConfidentialityPanelState();
@@ -29,14 +27,18 @@ class ConfidentialityPanel extends StatefulWidget {
 class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
   bool checkbox1 = false;
   bool checkbox2 = false;
+  bool checkbox3 = false; // New checkbox for email subscription
 
-  void _onNextPressed() {
-    // print("Кнопка 'Далее' нажата");
+
+  void _onNextPressed() async {
+    final prefs = await SharedPreferences.getInstance();
     if (checkbox1 && checkbox2) {
+      if (checkbox3) {
+        await prefs.setBool('subscription_confirmed', true);
+      }
       widget.onNext();
     } else {
-      // print("Оба чекбокса должны быть отмечены");
-      // Если нужно, можно показать сообщение об ошибке
+      // Show error message if needed
     }
   }
 
@@ -44,13 +46,13 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
   Widget build(BuildContext context) {
     return Container(
       width: 396 * widget.scaleX,
-      height: 727 * widget.scaleY,
+      height: 800 * widget.scaleY, // Increased height to accommodate new checkbox
       child: Stack(
         children: [
-          // text1.svg – располагается с отступом 40 px сверху и 20 px слева от начала панели
+          // Existing widgets...
           Positioned(
-            top: 40 * widget.scaleY, // (369 - 329) = 40
-            left: 20 * widget.scaleX, // (36 - 16) = 20
+            top: 40 * widget.scaleY,
+            left: 20 * widget.scaleX,
             child: SvgPicture.asset(
               'assets/register_confidentiality_sheet/text1.svg',
               width: 295 * widget.scaleX,
@@ -58,9 +60,9 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
               fit: BoxFit.cover,
             ),
           ),
-          // text2.svg
+          
           Positioned(
-            top: 106 * widget.scaleY, // (435 - 329) = 106
+            top: 106 * widget.scaleY,
             left: 20 * widget.scaleX,
             child: SizedBox(
               width: 310 * widget.scaleX,
@@ -78,24 +80,23 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
               ),
             ),
           ),
-          // Чекбокс 1
+          
+          // Checkbox 1
           Positioned(
-            top: 226 * widget.scaleY, // (505 - 329) = 176
-            left: 20 * widget.scaleX, // (36 - 16) = 20
+            top: 226 * widget.scaleY,
+            left: 20 * widget.scaleX,
             child: CustomCheckbox(
               initialValue: checkbox1,
               onChanged: (bool value) {
                 setState(() {
                   checkbox1 = value;
                 });
-                // print("Первый чекбокс: $value");
               },
               scaleX: widget.scaleX,
               scaleY: widget.scaleY,
             ),
           ),
-          // Кликабельный текст "Я принимаю условия Политики конфиденциальности и даю согласие..."
-          // Координаты: абсолютные значения из макета: top:505, left:65; относительно панели: top = 505 - 329 = 176, left = 65 - 16 = 49.
+          
           Positioned(
             top: 226 * widget.scaleY,
             left: 49 * widget.scaleX,
@@ -124,12 +125,11 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
                         ..onTap = () {
                           Navigator.of(context).push(
                             PageRouteBuilder(
-                              transitionDuration:
-                                  const Duration(milliseconds: 300),
+                              transitionDuration: const Duration(milliseconds: 300),
                               pageBuilder: (_, animation, secondaryAnimation) =>
                                   const ConfScreen(),
                               transitionsBuilder: (_, animation, __, child) {
-                                const begin = Offset(1.0, 0.0); // справа
+                                const begin = Offset(1.0, 0.0);
                                 const end = Offset.zero;
                                 const curve = Curves.easeInOut;
 
@@ -144,21 +144,20 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
                               },
                             ),
                           );
-                          print("Политики конфиденциальности нажата");
                         },
                     ),
                     const TextSpan(
-                      text:
-                          ' и даю согласие\nна обработку моих персональных данных в соответствии с законодательством',
+                      text: ' и даю согласие\nна обработку моих персональных данных в соответствии с законодательством',
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          // Чекбокс 2
+          
+          // Checkbox 2
           Positioned(
-            top: 316 * widget.scaleY, // (595 - 329) = 266
+            top: 316 * widget.scaleY,
             left: 20 * widget.scaleX,
             child: CustomCheckbox(
               initialValue: checkbox2,
@@ -166,15 +165,15 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
                 setState(() {
                   checkbox2 = value;
                 });
-                // print("Второй чекбокс: $value");
               },
               scaleX: widget.scaleX,
               scaleY: widget.scaleY,
             ),
           ),
+          
           Positioned(
-            top: 316 * widget.scaleY, // Например, 595 - 329 = 266
-            left: (65 - 16) * widget.scaleX, // Например, 65 - 16 = 49
+            top: 316 * widget.scaleY,
+            left: (65 - 16) * widget.scaleX,
             child: SizedBox(
               width: 268 * widget.scaleX,
               height: 20 * widget.scaleY,
@@ -193,19 +192,18 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
                     TextSpan(
                       text: 'Условиями использования',
                       style: const TextStyle(
-                        color: Color(0xFF00A80E), // Цвет: #00A80E
+                        color: Color(0xFF00A80E),
                         decoration: TextDecoration.underline,
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           Navigator.of(context).push(
                             PageRouteBuilder(
-                              transitionDuration:
-                                  const Duration(milliseconds: 300),
+                              transitionDuration: const Duration(milliseconds: 300),
                               pageBuilder: (_, animation, secondaryAnimation) =>
                                   const LicenseScreen(),
                               transitionsBuilder: (_, animation, __, child) {
-                                const begin = Offset(1.0, 0.0); // справа
+                                const begin = Offset(1.0, 0.0);
                                 const end = Offset.zero;
                                 const curve = Curves.easeInOut;
 
@@ -220,8 +218,6 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
                               },
                             ),
                           );
-                          // print('Условия использования нажаты');
-                          // Здесь можно добавить логику перехода на страницу условий
                         },
                     ),
                   ],
@@ -230,23 +226,59 @@ class _ConfidentialityPanelState extends State<ConfidentialityPanel> {
             ),
           ),
 
-          // Кнопка "Далее"
+          // New Checkbox 3 for email subscription
           Positioned(
-            top: 366 * widget.scaleY, // (645 - 329) = 316
-            left: 20 * widget.scaleX, // (36 - 16) = 20
+            top: 350 * widget.scaleY, // Positioned below the second checkbox
+            left: 20 * widget.scaleX,
+            child: CustomCheckbox(
+              initialValue: checkbox3,
+              onChanged: (bool value) {
+                setState(() {
+                  checkbox3 = value;
+                });
+              },
+              scaleX: widget.scaleX,
+              scaleY: widget.scaleY,
+            ),
+          ),
+          
+          Positioned(
+            top: 350 * widget.scaleY,
+            left: 49 * widget.scaleX,
+            child: SizedBox(
+              width: 268 * widget.scaleX,
+              height: 40 * widget.scaleY,
+              child: Text(
+                'Я согласен получать информационную рассылку по почте',
+                style: TextStyle(
+                  fontFamily: 'Jost',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14 * widget.scaleX,
+                  height: 20 / 14,
+                  letterSpacing: -0.1 * widget.scaleX,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+
+          // Next Button (moved down to accommodate new checkbox)
+          Positioned(
+            top: 446 * widget.scaleY, // Adjusted position
+            left: 20 * widget.scaleX,
             child: NextButton(
               scaleX: widget.scaleX,
               scaleY: widget.scaleY,
               onPressed: _onNextPressed,
             ),
           ),
+          
           Positioned(
-            top: 366 * widget.scaleY, // (645 - 329) = 316
-            right: 20 * widget.scaleX, // (36 - 16) = 20
+            top: 446 * widget.scaleY, // Adjusted position
+            right: 20 * widget.scaleX,
             child: PopButton(
               scaleX: widget.scaleX,
               scaleY: widget.scaleY,
-              // onPressed: _onNextPressed,
             ),
           ),
         ],

@@ -164,14 +164,15 @@ class _AppInitializerState extends State<AppInitializer> {
 
         int likedCount = await funcs.getLikedCount(accessToken, userId);
         await prefs.setInt('liked_count', likedCount);
-      // Если currentPage равен "tinder" или "job", запускаем MainScreen, иначе WelcomeScreen
-      if (currentPage == 'tinder' || currentPage == 'search' || currentPage == 'job') {
-        return MainScreen();
+        // Если currentPage равен "tinder" или "job", запускаем MainScreen, иначе WelcomeScreen
+        if (currentPage == 'tinder' ||
+            currentPage == 'search' ||
+            currentPage == 'job') {
+          return MainScreen();
+        } else {
+          return WelcomeScreen();
+        }
       } else {
-        return WelcomeScreen();
-      }
-      }
-      else {
         return WelcomeScreen();
       }
     } else {
@@ -192,7 +193,7 @@ class _AppInitializerState extends State<AppInitializer> {
     }
     return 0;
   }
-  
+
   @override
   void initState() {
     super.initState();

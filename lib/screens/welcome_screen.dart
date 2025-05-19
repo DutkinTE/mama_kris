@@ -281,7 +281,7 @@ class WelcomeScreen extends StatelessWidget {
         ],
       ),
     );
-  }
+  } 
 
   void _onRegisterPressed(BuildContext context) {
     // print("Регистрация нажата");

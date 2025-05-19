@@ -127,6 +127,7 @@ Future<bool> registerFunction(
     if (response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
       final prefs = await SharedPreferences.getInstance();
+      print(responseData);
 
       await prefs.setString('auth_token', responseData['accessToken']);
       await prefs.setString('refresh_token', responseData['refreshToken']);
@@ -135,6 +136,41 @@ Future<bool> registerFunction(
       await prefs.setString('current_page', 'choice');
       await prefs.setInt('viewed_count', 0);
       await prefs.setInt('liked_count', 0);
+
+      final confirmed = await prefs.getBool('subscription_confirmed');
+
+      if (confirmed != null && confirmed == true) {
+        final url2 = Uri.parse(
+            'https://dev.mamakris.ru/mail/api/mail/confirm-subscription/${responseData['userId']}');
+        final headers2 = {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${responseData['accessToken']}',
+        };
+        try {
+          // print("Подтверждение подписки для userId: ${responseData['userId']}");
+          // print("Используемый токен: ${responseData['accessToken']}");
+
+          final response2 = await http
+              .post(
+                url2,
+                headers: headers2,
+              );
+
+          // print("Статус подтверждения подписки: ${response2.statusCode}");
+          // print("Ответ сервера: ${response2.body}");
+
+          if (response2.statusCode == 200) {
+            print('Подписка успешно подтверждена');
+          } else {
+            print('Ошибка подтверждения подписки: ${response2.statusCode}');
+            print('Ответ сервера: ${response2.body}');
+          }
+        } catch (e) {
+          // print('Ошибка при подтверждении подписки: $e');
+        }
+      } else {
+        // print('Не согласился на рассылку');
+      }
 
       // 🧠 Обновляем профиль из API
       await funcs.updateUserDataInCache(

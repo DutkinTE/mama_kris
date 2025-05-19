@@ -54,10 +54,10 @@ Future<bool> loginAndContinue({
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({
       'email': emailController.text.trim(),
-      'password': passwordController.text.trim(),
+      'password': passwordController.text.trim(), 
     });
 
-    final response = await http.post(url, headers: headers, body: body);
+    final response = await http.post(url, headers: headers, body: body);   
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);

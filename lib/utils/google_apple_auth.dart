@@ -12,10 +12,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/foundation.dart'; // для kDebugMode
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-
 Future<void> signInWithApple(BuildContext context) async {
   try {
-    if (kDebugMode) print('🍏 [Apple Sign-In] Запуск процесса входа через Apple...');
+    if (kDebugMode)
+      print('🍏 [Apple Sign-In] Запуск процесса входа через Apple...');
 
     final credential = await SignInWithApple.getAppleIDCredential(
       scopes: [
@@ -31,7 +31,6 @@ Future<void> signInWithApple(BuildContext context) async {
       print('📧 Email: ${credential.email}');
       print('👤 Имя: ${credential.givenName}');
       print('👥 Фамилия: ${credential.familyName}');
-
     }
     final name = credential.givenName;
     final surname = credential.familyName;
@@ -44,8 +43,10 @@ Future<void> signInWithApple(BuildContext context) async {
     }
 
     if (identityToken == null) {
-      if (kDebugMode) print('❌ [Apple Sign-In] Не удалось получить identityToken');
-      lgn.showErrorSnackBar(context, '❗ Не удалось получить Apple Identity Token');
+      if (kDebugMode)
+        print('❌ [Apple Sign-In] Не удалось получить identityToken');
+      lgn.showErrorSnackBar(
+          context, '❗ Не удалось получить Apple Identity Token');
       return;
     }
 
@@ -55,35 +56,30 @@ Future<void> signInWithApple(BuildContext context) async {
       'Accept': 'application/json',
     };
     String body;
-    if (name!=null || surname!=null){
-     body = jsonEncode({
-      'identityToken': identityToken,
-      "userData": {"firstName": name,
-        "lastName": surname},
-    });
-    }
-    else if (name!=null){
-       body = jsonEncode({
+    if (name != null || surname != null) {
+      body = jsonEncode({
         'identityToken': identityToken,
-         "userData": {"firstName": name,
-           "lastName": ""},
+        "userData": {"firstName": name, "lastName": surname},
       });
-    }
-    else if (surname!=null){
-       body = jsonEncode({
+    } else if (name != null) {
+      body = jsonEncode({
         'identityToken': identityToken,
-         "userData": {"firstName": "",
-           "lastName": surname},
+        "userData": {"firstName": name, "lastName": ""},
       });
-    }
-    else{
-       body = jsonEncode({
+    } else if (surname != null) {
+      body = jsonEncode({
         'identityToken': identityToken,
-         "userData": {},
+        "userData": {"firstName": "", "lastName": surname},
+      });
+    } else {
+      body = jsonEncode({
+        'identityToken': identityToken,
+        "userData": {},
       });
     }
 
-    if (kDebugMode) print('📡 [Apple Sign-In] Отправка запроса на бэкенд → $url');
+    if (kDebugMode)
+      print('📡 [Apple Sign-In] Отправка запроса на бэкенд → $url');
     final response = await http.post(url, headers: headers, body: body);
 
     if (kDebugMode) {
@@ -93,9 +89,11 @@ Future<void> signInWithApple(BuildContext context) async {
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
+      print(data);
       final accessToken = data['accessToken'];
       final refreshToken = data['refreshToken'];
       final userId = data['userID'];
+      final firstin = data['firstin'];
 
       if (accessToken != null && refreshToken != null) {
         final prefs = await SharedPreferences.getInstance();
@@ -122,7 +120,13 @@ Future<void> signInWithApple(BuildContext context) async {
         await prefs.setInt('viewed_count', viewedCount);
         await prefs.setInt('liked_count', likedCount);
 
-        if (kDebugMode) print('📊 Просмотров: $viewedCount, Лайков: $likedCount');
+        if (kDebugMode)
+          print('📊 Просмотров: $viewedCount, Лайков: $likedCount');
+
+        if (firstin) {
+          showCheckboxSelectionPanel(context);
+          return;
+        }
 
         final String? currentPage = prefs.getString('current_page');
         if (currentPage == 'choice' || currentPage == null) {
@@ -133,19 +137,21 @@ Future<void> signInWithApple(BuildContext context) async {
           double scaleX = MediaQuery.of(context).size.width / 428;
           double scaleY = MediaQuery.of(context).size.height / 956;
           Widget nextPage =
-          await lgn.determineNextPage(accessToken, userId, scaleX, scaleY);
+              await lgn.determineNextPage(accessToken, userId, scaleX, scaleY);
 
           Navigator.of(context).pushAndRemoveUntil(
             PageRouteBuilder(
               transitionDuration: const Duration(milliseconds: 300),
               pageBuilder: (_, animation, __) => nextPage,
               transitionsBuilder: (_, animation, __, child) {
-                final tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                    .chain(CurveTween(curve: Curves.easeInOut));
-                return SlideTransition(position: animation.drive(tween), child: child);
+                final tween =
+                    Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                        .chain(CurveTween(curve: Curves.easeInOut));
+                return SlideTransition(
+                    position: animation.drive(tween), child: child);
               },
             ),
-                (route) => false,
+            (route) => false,
           );
         }
       } else {
@@ -153,7 +159,8 @@ Future<void> signInWithApple(BuildContext context) async {
         lgn.showErrorSnackBar(context, '❗ Ошибка входа: токены отсутствуют');
       }
     } else {
-      if (kDebugMode) print('❌ Ошибка входа: статус ответа ${response.statusCode}');
+      if (kDebugMode)
+        print('❌ Ошибка входа: статус ответа ${response.statusCode}');
       lgn.showErrorSnackBar(context, '❗ Ошибка входа через Apple');
     }
   } catch (e, stacktrace) {
@@ -161,16 +168,16 @@ Future<void> signInWithApple(BuildContext context) async {
       print('🛑 Исключение при входе через Apple: $e');
       print('🔍 Stacktrace: $stacktrace');
     }
-    lgn.showErrorSnackBar(context, 'Ошибка входа через Apple. Попробуйте ещё раз.');
+    lgn.showErrorSnackBar(
+        context, 'Ошибка входа через Apple. Попробуйте ещё раз.');
   }
 }
-
 
 final GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: ['openid', 'email', 'profile'],
   serverClientId:
       // '86099763542-a94uom1ijlqu6jp263dtc43dvgd540np.apps.googleusercontent.com',
-  '86099763542-9tgb2dqc63hj0utf8fc9mvve0fplc8e1.apps.googleusercontent.com',
+      '86099763542-9tgb2dqc63hj0utf8fc9mvve0fplc8e1.apps.googleusercontent.com',
 );
 
 Future<void> signInWithGoogle(BuildContext context) async {
@@ -211,9 +218,11 @@ Future<void> signInWithGoogle(BuildContext context) async {
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
+      print(data);
       final accessToken = data['accessToken'];
       final refreshToken = data['refreshToken'];
       final userId = data['userId'];
+      final firstin = data['firstin'];
 
       if (accessToken != null && refreshToken != null) {
         final prefs = await SharedPreferences.getInstance();
@@ -235,18 +244,24 @@ Future<void> signInWithGoogle(BuildContext context) async {
         await prefs.setInt('viewed_count', viewedCount);
         await prefs.setInt('liked_count', likedCount);
 
+        if (firstin) {
+          showCheckboxSelectionPanel(context);
+          return;
+        }
+
         // print(
         //     '✅ Успешный вход. UserID: $userId, Лайков: $likedCount, Просмотров: $viewedCount');
 
         final String? currentPage = prefs.getString('current_page');
         if (currentPage == 'choice' || currentPage == null) {
+          print(currentPage);
           showRoleSelectionPanel(context);
         } else {
           double scaleX = MediaQuery.of(context).size.width / 428;
           double scaleY = MediaQuery.of(context).size.height / 956;
           Widget nextPage =
               await lgn.determineNextPage(accessToken, userId, scaleX, scaleY);
-
+          print(nextPage);
           Navigator.of(context).pushAndRemoveUntil(
             PageRouteBuilder(
               transitionDuration: const Duration(milliseconds: 300),
@@ -373,7 +388,6 @@ Widget _circleButton({
     ),
   );
 }
-
 
 // 👉 Функция для обработки нажатия кнопки Google
 void onGooglePressed(context) {
